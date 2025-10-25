@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:study_tracker/core/constants/app_colors.dart';
 import 'package:study_tracker/core/constants/app_strings.dart';
 import 'package:study_tracker/core/utils/validators.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
+import 'package:study_tracker/features/tasks/provider/task_provider.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -271,30 +273,66 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   void _saveTask() async {
+    // Validate date
     if (_selectedDate == null) {
-      setState(() {});
+      setState(() {}); // Trigger rebuild to show error
       return;
     }
 
+    // Validate form
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    // Show loading state
     setState(() => _isLoading = true);
 
-    await Future.delayed(const Duration(seconds: 1));
+    // Get provider and save
+    final taskProvider = context.read<TaskProvider>();
 
-    if (!mounted) return;
+    try {
+      // Get description from QuillController
+      final descriptionPlainText = _descriptionController.document
+          .toPlainText()
+          .trim();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(AppStrings.taskCreated),
-        backgroundColor: AppColors.statusCompleted,
-        duration: Duration(seconds: 2),
-      ),
-    );
+      await taskProvider.addTask(
+        title: _titleController.text.trim(),
+        description: descriptionPlainText,
+        dueDate: _selectedDate!,
+        category: _selectedCategory!,
+        priority: _selectedPriority,
+      );
 
-    Navigator.pop(context);
+      if (!mounted) return;
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.taskCreated),
+          backgroundColor: AppColors.statusCompleted,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Navigate back
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: AppColors.error,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   Future<void> _pickDate() async {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:study_tracker/core/constants/app_colors.dart';
 import 'package:study_tracker/core/constants/app_strings.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
+import 'package:study_tracker/features/tasks/provider/task_provider.dart';
 import 'package:study_tracker/features/tasks/widgets/task_card.dart';
 import 'package:study_tracker/routes/app_routes.dart';
 
@@ -13,6 +15,7 @@ class TaskListScreen extends StatefulWidget {
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
+  final Set<String> _dismissedIds = {};
   late List<TaskModel> tasks;
 
   @override
@@ -25,7 +28,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(AppStrings.myTasks)),
-      body: tasks.isEmpty ? _buildEmptyState() : _buildTaskList(),
+      body: Consumer<TaskProvider>(
+        builder: (context, taskProvider, child) {
+          if (taskProvider.tasks.isEmpty) return _buildEmptyState();
+          return _buildTaskList(taskProvider.tasks);
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAddTask,
         tooltip: AppStrings.addTask,
@@ -58,13 +66,20 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  Widget _buildTaskList() {
+  Widget _buildTaskList(List<TaskModel> tasks) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
       itemCount: tasks.length,
       itemBuilder: (context, index) {
         final task = tasks[index];
-        return _buildDismissibleTaskCard(task, index);
+        // CHANGED: Skip dismissed items
+        if (_dismissedIds.contains(task.id)) {
+          return const SizedBox.shrink();
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildDismissibleTaskCard(task, index), // From P05
+        );
       },
     );
   }
@@ -75,7 +90,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       direction: DismissDirection.endToStart,
       background: _buildDeleteBackground(),
       confirmDismiss: (direction) => _showDeleteConfirmation(task),
-      onDismissed: (direction) => _deleteTask(index),
+      onDismissed: (direction) => _deleteTask(task),
       child: InkWell(
         onTap: () => _navigateToDetail(task),
         borderRadius: BorderRadius.circular(12),
@@ -117,16 +132,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  void _deleteTask(int index) {
-    setState(() {
-      tasks.removeAt(index);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(AppStrings.taskDeleted),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  void _deleteTask(TaskModel task) {
+    setState(() => _dismissedIds.add(task.id));
+    context.read<TaskProvider>().deleteTask(task.id);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text(AppStrings.taskDeleted)));
   }
 
   void _navigateToDetail(TaskModel task) {

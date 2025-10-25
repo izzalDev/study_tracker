@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
+import 'package:study_tracker/features/tasks/provider/task_provider.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskModel task;
@@ -49,6 +51,22 @@ class TaskCard extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
+        Checkbox(
+          value: task.isCompleted,
+          onChanged: (_) {
+            context.read<TaskProvider>().toggleTaskCompletion(task.id);
+          },
+        ),
+
+        // CHANGED: Wrap title dengan Expanded + strikethrough
+        Expanded(
+          child: Text(
+            task.title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+            ),
+          ),
+        ),
         // Priority indicator
         Container(
           width: 12,
@@ -59,24 +77,6 @@ class TaskCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-
-        // Task title
-        Expanded(
-          child: Text(
-            task.title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-            ),
-          ),
-        ),
-
-        // Checkbox
-        Checkbox(
-          value: task.isCompleted,
-          onChanged: onCheckChanged != null
-              ? (value) => onCheckChanged!(value ?? false)
-              : null,
-        ),
       ],
     );
   }
