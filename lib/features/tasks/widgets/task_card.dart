@@ -1,219 +1,190 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:study_tracker/core/constants/app_colors.dart';
-import 'package:study_tracker/core/constants/app_strings.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskModel task;
+  final VoidCallback? onTap;
+  final ValueChanged<bool>? onCheckChanged;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
-  const TaskCard({super.key, required this.task});
+  const TaskCard({
+    super.key,
+    required this.task,
+    this.onTap,
+    this.onCheckChanged,
+    this.onEdit,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
-      shadowColor: Colors.black.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: _getStatusBorderColor(),
-          width: task.status == TaskStatus.overdue ? 1.5 : 0.5,
-        ),
+        side: BorderSide(color: _getPriorityColor(), width: 2),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header: Title + Priority Badge
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    task.title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      decoration: task.isCompleted
-                          ? TextDecoration.lineThrough
-                          : null,
-                      color: task.isCompleted
-                          ? Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.6)
-                          : Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                _buildPriorityBadge(context),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Description
-            Text(
-              task.description,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-
-            const SizedBox(height: 16),
-
-            // Footer: Due Date + Status
-            Row(
-              children: [
-                Icon(Icons.calendar_today, size: 16, color: _getStatusColor()),
-                const SizedBox(width: 6),
-                Text(
-                  DateFormat('MMM dd, yyyy').format(task.dueDate),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: _getStatusColor(),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Spacer(),
-                _buildStatusBadge(context),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPriorityBadge(BuildContext context) {
-    final (bgColor, textColor, label) = _getPriorityBadgeData();
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: textColor, shape: BoxShape.circle),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 8),
+              _buildDescription(),
+              const SizedBox(height: 12),
+              _buildFooter(context),
+            ],
           ),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatusBadge(BuildContext context) {
-    final (bgColor, textColor, icon, label) = _getStatusBadgeData();
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        // Priority indicator
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: _getPriorityColor(),
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 8),
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: textColor),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.w600,
+        // Task title
+        Expanded(
+          child: Text(
+            task.title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
             ),
           ),
-        ],
-      ),
+        ),
+
+        // Checkbox
+        Checkbox(
+          value: task.isCompleted,
+          onChanged: onCheckChanged != null
+              ? (value) => onCheckChanged!(value ?? false)
+              : null,
+        ),
+      ],
     );
   }
 
-  (Color bgColor, Color textColor, String label) _getPriorityBadgeData() {
+  Widget _buildDescription() {
+    return Text(
+      task.description,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(color: Colors.grey[600], fontSize: 14),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    return Row(
+      children: [
+        // Category chip
+        _CategoryChip(category: task.category),
+        const SizedBox(width: 8),
+
+        // Due date
+        Icon(Icons.calendar_today, size: 14, color: Colors.grey[600]),
+        const SizedBox(width: 4),
+        Text(
+          _formatDate(task.dueDate),
+          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+        ),
+
+        const Spacer(),
+
+        // Action buttons
+        if (onEdit != null)
+          IconButton(
+            icon: const Icon(Icons.edit, size: 18),
+            onPressed: onEdit,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        if (onDelete != null) ...[
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.delete, size: 18, color: Colors.red),
+            onPressed: onDelete,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Color _getPriorityColor() {
     switch (task.priority) {
       case TaskPriority.high:
-        return (
-          AppColors.priorityHighLight,
-          AppColors.priorityHigh,
-          AppStrings.priorityHigh,
-        );
+        return Colors.red;
       case TaskPriority.medium:
-        return (
-          AppColors.priorityMediumLight,
-          AppColors.priorityMedium,
-          AppStrings.priorityMedium,
-        );
+        return Colors.orange;
       case TaskPriority.low:
-        return (
-          AppColors.priorityLowLight,
-          AppColors.priorityLow,
-          AppStrings.priorityLow,
-        );
+        return Colors.green;
     }
   }
 
-  (Color bgColor, Color textColor, IconData icon, String label)
-  _getStatusBadgeData() {
-    switch (task.status) {
-      case TaskStatus.completed:
-        return (
-          AppColors.statusCompletedLight,
-          AppColors.statusCompleted,
-          Icons.check_circle,
-          AppStrings.statusCompleted,
-        );
-      case TaskStatus.pending:
-        return (
-          AppColors.statusPendingLight,
-          AppColors.statusPending,
-          Icons.schedule,
-          AppStrings.statusPending,
-        );
-      case TaskStatus.overdue:
-        return (
-          AppColors.statusOverdueLight,
-          AppColors.statusOverdue,
-          Icons.warning,
-          AppStrings.statusOverdue,
-        );
-    }
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = date.difference(now).inDays;
+
+    if (difference == 0) return 'Today';
+    if (difference == 1) return 'Tomorrow';
+    if (difference < 0) return 'Overdue';
+    return '${difference}d left';
+  }
+}
+
+// Helper widget: Category chip
+class _CategoryChip extends StatelessWidget {
+  final TaskCategory category;
+
+  const _CategoryChip({required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: _getCategoryColor().withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        category.name,
+        style: TextStyle(
+          fontSize: 12,
+          color: _getCategoryColor(),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
-  Color _getStatusColor() {
-    switch (task.status) {
-      case TaskStatus.completed:
-        return AppColors.statusCompleted;
-      case TaskStatus.pending:
-        return AppColors.statusPending;
-      case TaskStatus.overdue:
-        return AppColors.statusOverdue;
-    }
-  }
-
-  Color _getStatusBorderColor() {
-    switch (task.status) {
-      case TaskStatus.completed:
-        return AppColors.statusCompleted.withValues(alpha: 0.3);
-      case TaskStatus.pending:
-        return AppColors.outline.withValues(alpha: 0.2);
-      case TaskStatus.overdue:
-        return AppColors.statusOverdue.withValues(alpha: 0.5);
+  Color _getCategoryColor() {
+    switch (category) {
+      case TaskCategory.study:
+        return Colors.blue;
+      case TaskCategory.assignment:
+        return Colors.purple;
+      case TaskCategory.project:
+        return Colors.orange;
+      case TaskCategory.personal:
+        return Colors.green;
     }
   }
 }

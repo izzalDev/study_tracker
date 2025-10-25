@@ -4,6 +4,7 @@ class TaskModel {
   final String description;
   final DateTime dueDate;
   final TaskPriority priority;
+  final TaskCategory category;
   final bool isCompleted;
 
   TaskModel({
@@ -12,6 +13,7 @@ class TaskModel {
     required this.description,
     required this.dueDate,
     required this.priority,
+    required this.category,
     this.isCompleted = false,
   });
 
@@ -31,6 +33,7 @@ class TaskModel {
         description: 'Finish calculus homework chapter 5',
         dueDate: now.add(const Duration(days: 2)),
         priority: TaskPriority.high,
+        category: TaskCategory.study,
         isCompleted: false,
       ),
       TaskModel(
@@ -39,6 +42,7 @@ class TaskModel {
         description: 'Read about World War II and make notes',
         dueDate: now.add(const Duration(days: 5)),
         priority: TaskPriority.medium,
+        category: TaskCategory.project,
         isCompleted: false,
       ),
       TaskModel(
@@ -47,6 +51,7 @@ class TaskModel {
         description: 'Write lab report for pendulum experiment',
         dueDate: now.subtract(const Duration(days: 1)),
         priority: TaskPriority.high,
+        category: TaskCategory.personal,
         isCompleted: false,
       ),
       TaskModel(
@@ -55,6 +60,7 @@ class TaskModel {
         description: 'First draft of argumentative essay',
         dueDate: now.add(const Duration(days: 7)),
         priority: TaskPriority.low,
+        category: TaskCategory.assignment,
         isCompleted: false,
       ),
       TaskModel(
@@ -63,6 +69,7 @@ class TaskModel {
         description: 'Study organic chemistry for quiz',
         dueDate: now.subtract(const Duration(days: 3)),
         priority: TaskPriority.medium,
+        category: TaskCategory.assignment,
         isCompleted: true,
       ),
     ];
@@ -72,3 +79,5 @@ class TaskModel {
 enum TaskPriority { low, medium, high }
 
 enum TaskStatus { completed, pending, overdue }
+
+enum TaskCategory { study, assignment, project, personal }
