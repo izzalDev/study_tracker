@@ -52,4 +52,9 @@ class AppStrings {
   static const String taskUpdated = 'Task updated successfully';
   static const String draftSaved = 'Draft saved';
   static const String draftLoaded = 'Draft loaded';
+
+  static const String categoryStudy = 'Study';
+  static const String categoryAssignment = 'Assignment';
+  static const String categoryProject = 'Project';
+  static const String categoryPersonal = 'Personal';
 }

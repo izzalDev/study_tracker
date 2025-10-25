@@ -33,9 +33,18 @@ class AppColors {
   static const Color priorityLowLight = Color(0xFFD1FAE5);
 
   static const Color categoryStudy = Color(0xFF3B82F6);
+  static const Color categoryStudyLight = Color(0xFFDBEAFE);
+
   static const Color categoryAssignment = Color(0xFF8B5CF6);
+  static const Color categoryAssignmentLight = Color(0xFFEDE9FE);
+
   static const Color categoryExam = Color(0xFFEC4899);
+
+  static const Color categoryPersonal = Color(0xFFEC4899);
+  static const Color categoryPersonalLight = Color(0xFFFCE7F3);
+
   static const Color categoryProject = Color(0xFF14B8A6);
+  static const Color categoryProjectLight = Color(0xFFE0E7FF);
 
   static const Color statusCompleted = Color(0xFF059669);
   static const Color statusCompletedLight = Color(0xFFD1FAE5);
@@ -45,4 +54,6 @@ class AppColors {
 
   static const Color statusOverdueLight = Color(0xFFFEE2E2);
   static const Color statusOverdue = Color(0xFFEF4444);
+
+  static const Color surfaceVariant = Color(0xFFE7E0EC);
 }
