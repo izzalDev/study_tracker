@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../models/task_model.dart';
-import '../widgets/task_card.dart';
-import '../../../core/constants/app_strings.dart';
+import 'package:study_tracker/core/constants/app_colors.dart';
+import 'package:study_tracker/core/constants/app_strings.dart';
+import 'package:study_tracker/features/tasks/models/task_model.dart';
+import 'package:study_tracker/features/tasks/widgets/task_card.dart';
+import 'package:study_tracker/routes/app_routes.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -57,8 +59,72 @@ class _TaskListScreenState extends State<TaskListScreen> {
       itemCount: tasks.length,
       itemBuilder: (context, index) {
         final task = tasks[index];
-        return TaskCard(task: task);
+        return _buildDismissibleTaskCard(task, index);
       },
     );
+  }
+
+  Widget _buildDismissibleTaskCard(TaskModel task, int index) {
+    return Dismissible(
+      key: Key(task.id),
+      direction: DismissDirection.endToStart,
+      background: _buildDeleteBackground(),
+      confirmDismiss: (direction) => _showDeleteConfirmation(task),
+      onDismissed: (direction) => _deleteTask(index),
+      child: InkWell(
+        onTap: () => _navigateToDetail(task),
+        borderRadius: BorderRadius.circular(12),
+        child: TaskCard(task: task),
+      ),
+    );
+  }
+
+  Widget _buildDeleteBackground() {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.only(right: 20),
+      decoration: BoxDecoration(
+        color: AppColors.error,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Icon(Icons.delete, color: Colors.white, size: 32),
+    );
+  }
+
+  Future<bool?> _showDeleteConfirmation(TaskModel task) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(AppStrings.deleteTask),
+        content: const Text(AppStrings.deleteTaskConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text(AppStrings.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text(AppStrings.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteTask(int index) {
+    setState(() {
+      tasks.removeAt(index);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(AppStrings.taskDeleted),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _navigateToDetail(TaskModel task) {
+    Navigator.pushNamed(context, AppRoutes.taskDetail, arguments: task);
   }
 }
