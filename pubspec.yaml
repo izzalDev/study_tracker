@@ -46,6 +46,7 @@ dependencies:
   intl: ^0.20.2
   google_fonts: ^6.3.2
   vsc_quill_delta_to_html: ^1.0.5
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
