@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
 import 'package:study_tracker/core/constants/app_colors.dart';
 import 'package:study_tracker/core/constants/app_strings.dart';
@@ -16,7 +17,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  final _descriptionController = QuillController.basic();
 
   DateTime? _selectedDate;
   TaskCategory? _selectedCategory;
@@ -57,19 +58,82 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
               const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.taskDescription,
-                  hintText: 'Describe your task in detail...',
-                  prefixIcon: Icon(Icons.description),
-                  border: OutlineInputBorder(),
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 5,
-                textCapitalization: TextCapitalization.sentences,
-                validator: Validators.taskDescription,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppStrings.taskDescription,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: AppColors.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: AppColors.surfaceVariant,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
+                    ),
+                    child: QuillSimpleToolbar(
+                      controller: _descriptionController,
+                      config: const QuillSimpleToolbarConfig(
+                        toolbarSize: 36,
+                        showStrikeThrough: false,
+                        showInlineCode: false,
+                        showColorButton: false,
+                        showBackgroundColorButton: false,
+                        showClearFormat: false,
+                        showAlignmentButtons: false,
+                        showHeaderStyle: false,
+                        showListCheck: false,
+                        showCodeBlock: false,
+                        showQuote: false,
+                        showIndent: false,
+                        showLink: false,
+                        showSearchButton: false,
+                        showSubscript: false,
+                        showSuperscript: false,
+                        showFontFamily: false,
+                        showFontSize: false,
+                        showClipboardCopy: false,
+                        showClipboardCut: false,
+                        showClipboardPaste: false,
+                        showDividers: false,
+                      ),
+                    ),
+                  ),
+
+                  // Quill Editor
+                  Container(
+                    height: 200, // Fixed height untuk editor
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.outline),
+                      borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(8),
+                      ),
+                    ),
+                    child: QuillEditor.basic(
+                      controller: _descriptionController,
+                      config: const QuillEditorConfig(
+                        padding: EdgeInsets.all(16),
+                        placeholder: 'Describe your task in detail...',
+                      ),
+                    ),
+                  ),
+
+                  if (_descriptionController.document.isEmpty())
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, left: 12),
+                      child: Text(
+                        AppStrings.descriptionMinLength,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: AppColors.error),
+                      ),
+                    ),
+                ],
               ),
 
               const SizedBox(height: 24),
