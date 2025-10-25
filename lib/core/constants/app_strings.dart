@@ -11,37 +11,26 @@ class AppStrings {
   static const String delete = 'Delete';
   static const String ok = 'OK';
 
-  // ==================== TODO: Additional Strings ====================
-  // Will be added progressively in future tutorials:
+  static const String confirm = 'Confirm';
 
-  // TODO P5: Add navigation strings
-  // static const String tasks = 'Tasks';
-  // static const String dashboard = 'Dashboard';
-  // static const String profile = 'Profile';
+  static const String tasks = 'Tasks';
+  static const String dashboard = 'Dashboard';
+  static const String profile = 'Profile';
 
-  // TODO P5-7: Add task feature strings
-  // static const String taskList = 'My Tasks';
-  // static const String addTask = 'Add Task';
-  // static const String taskTitle = 'Task Title';
-  // static const String priorityHigh = 'High';
-  // static const String categoryStudy = 'Study';
-  // etc...
+  static const String myTasks = 'My Tasks';
+  static const String noTasks = 'No tasks yet';
+  static const String addTask = 'Add Task';
 
-  // TODO P6: Add form validation messages
-  // static const String fieldRequired = 'This field is required';
-  // static const String titleTooShort = 'Title must be at least 3 characters';
-  // etc...
+  static const String priorityHigh = 'High';
+  static const String priorityMedium = 'Medium';
+  static const String priorityLow = 'Low';
 
-  // TODO P7: Add success/error messages
-  // static const String taskCreated = 'Task created successfully';
-  // static const String errorGeneric = 'Something went wrong';
-  // etc...
+  static const String statusCompleted = 'Completed';
+  static const String statusPending = 'Pending';
+  static const String statusOverdue = 'Overdue';
 
-  // TODO P9: Add authentication strings
-  // static const String login = 'Login';
-  // static const String register = 'Register';
-  // etc...
-
-  // TODO P13: Add dashboard & analytics strings
-  // TODO P14: Add profile & settings strings
+  static const String deleteTask = 'Delete Task';
+  static const String deleteTaskConfirm =
+      'Are you sure you want to delete this task?';
+  static const String taskDeleted = 'Task deleted';
 }

@@ -23,25 +23,26 @@ class AppColors {
 
   static const Color outline = Color(0xFF79747E);
 
-  // ==================== TODO: Additional Colors ====================
-  // Will be added progressively in future tutorials:
+  static const Color priorityHigh = Color(0xFFDC2626);
+  static const Color priorityHighLight = Color(0xFFFEE2E2);
 
-  // TODO P5-6: Add priority colors
-  // static const Color priorityHigh = Color(0xFFDC2626);
-  // static const Color priorityMedium = Color(0xFFF59E0B);
-  // static const Color priorityLow = Color(0xFF10B981);
+  static const Color priorityMedium = Color(0xFFF59E0B);
+  static const Color priorityMediumLight = Color(0xFFFEF3C7);
 
-  // TODO P6-7: Add category colors
-  // static const Color categoryStudy = Color(0xFF3B82F6);
-  // static const Color categoryAssignment = Color(0xFF8B5CF6);
-  // static const Color categoryExam = Color(0xFFEC4899);
-  // static const Color categoryProject = Color(0xFF14B8A6);
+  static const Color priorityLow = Color(0xFF10B981);
+  static const Color priorityLowLight = Color(0xFFD1FAE5);
 
-  // TODO P7: Add status colors
-  // static const Color statusCompleted = Color(0xFF059669);
-  // static const Color statusPending = Color(0xFF6B7280);
-  // static const Color statusOverdue = Color(0xFFEF4444);
+  static const Color categoryStudy = Color(0xFF3B82F6);
+  static const Color categoryAssignment = Color(0xFF8B5CF6);
+  static const Color categoryExam = Color(0xFFEC4899);
+  static const Color categoryProject = Color(0xFF14B8A6);
 
-  // TODO P13: Add chart colors
-  // TODO P14: Add dark theme variants
+  static const Color statusCompleted = Color(0xFF059669);
+  static const Color statusCompletedLight = Color(0xFFD1FAE5);
+
+  static const Color statusPending = Color(0xFF6B7280);
+  static const Color statusPendingLight = Color(0xFFF3F4F6);
+
+  static const Color statusOverdueLight = Color(0xFFFEE2E2);
+  static const Color statusOverdue = Color(0xFFEF4444);
 }
