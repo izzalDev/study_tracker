@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'core/constants/app_strings.dart';
 import 'core/theme/app_theme.dart';
+import 'routes/route_generator.dart'; // ← TAMBAH import
+import 'routes/app_routes.dart'; // ← TAMBAH import
 
 /// Root widget untuk StudyTracker app
 class StudyTrackerApp extends StatelessWidget {
@@ -11,10 +13,8 @@ class StudyTrackerApp extends StatelessWidget {
     return MaterialApp(
       title: AppStrings.appName,
       theme: AppTheme.lightTheme,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(AppStrings.appName)),
-        body: const Center(child: Text('StudyTracker App - Theme Applied!')),
-      ),
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }
