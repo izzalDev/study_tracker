@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_tracker/features/auth/screens/splash_screen.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
+import 'package:study_tracker/features/tasks/screens/add_task_screen.dart';
 import 'package:study_tracker/features/tasks/screens/task_detail_screen.dart';
 import 'package:study_tracker/features/tasks/screens/task_list_screen.dart';
 import 'app_routes.dart';
@@ -19,6 +20,9 @@ class RouteGenerator {
 
       case AppRoutes.splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
+
+      case AppRoutes.addTask:
+        return MaterialPageRoute(builder: (_) => const AddTaskScreen());
 
       default:
         return MaterialPageRoute(
