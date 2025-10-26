@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:study_tracker/core/constants/app_colors.dart';
 import 'package:study_tracker/core/constants/app_strings.dart';
+import 'package:study_tracker/features/auth/providers/auth_provider.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
 import 'package:study_tracker/features/tasks/provider/task_provider.dart';
 import 'package:study_tracker/features/tasks/widgets/task_card.dart';
@@ -27,7 +28,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.myTasks)),
+      appBar: AppBar(
+        title: const Text(AppStrings.myTasks),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () => _handleLogout(context),
+          ),
+        ],
+      ),
       body: Consumer<TaskProvider>(
         builder: (context, taskProvider, child) {
           if (taskProvider.tasks.isEmpty) return _buildEmptyState();
@@ -146,5 +156,36 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   void _navigateToAddTask() {
     Navigator.pushNamed(context, AppRoutes.addTask);
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final authProvider = context.read<AuthProvider>();
+      await authProvider.logout();
+
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.login);
+      }
+    }
   }
 }
