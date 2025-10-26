@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:study_tracker/core/constants/app_colors.dart';
 import 'package:study_tracker/core/constants/app_strings.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
+import 'package:study_tracker/routes/app_routes.dart';
 
 class TaskDetailScreen extends StatelessWidget {
   final TaskModel task;
@@ -12,7 +13,18 @@ class TaskDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Task Detail')),
+      appBar: AppBar(
+        title: const Text('Task Detail'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.editTask, arguments: task);
+            },
+            tooltip: AppStrings.editTask,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

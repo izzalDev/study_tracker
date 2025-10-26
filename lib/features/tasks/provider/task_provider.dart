@@ -101,6 +101,51 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateTask({
+    required String id,
+    required String title,
+    required String description,
+    required DateTime dueDate,
+    required TaskCategory category,
+    required TaskPriority priority,
+    bool? isCompleted,
+  }) async {
+    try {
+      _setLoading(true);
+      _clearError();
+
+      // Simulate API delay
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Find task index
+      final index = _tasks.indexWhere((task) => task.id == id);
+      if (index == -1) {
+        throw Exception('Task not found');
+      }
+
+      // Get existing task to preserve completion status if not provided
+      final existingTask = _tasks[index];
+
+      // Update task
+      _tasks[index] = TaskModel(
+        id: id,
+        title: title,
+        description: description,
+        dueDate: dueDate,
+        category: category,
+        priority: priority,
+        isCompleted: isCompleted ?? existingTask.isCompleted,
+      );
+
+      notifyListeners();
+    } catch (e) {
+      _setError('Failed to update task: $e');
+      rethrow; // Rethrow for error handling di UI
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

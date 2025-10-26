@@ -57,4 +57,7 @@ class AppStrings {
   static const String categoryAssignment = 'Assignment';
   static const String categoryProject = 'Project';
   static const String categoryPersonal = 'Personal';
+
+  static const String editTask = 'Edit Task';
+  static const String updateTask = 'Update Task';
 }
