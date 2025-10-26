@@ -80,4 +80,12 @@ enum TaskPriority { low, medium, high }
 
 enum TaskStatus { completed, pending, overdue }
 
-enum TaskCategory { study, assignment, project, personal }
+enum TaskCategory {
+  study('Study'),
+  assignment('Assignment'),
+  project('Project'),
+  personal('Personal');
+
+  final String label;
+  const TaskCategory(this.label);
+}

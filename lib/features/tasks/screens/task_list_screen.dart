@@ -4,6 +4,7 @@ import 'package:study_tracker/core/constants/app_colors.dart';
 import 'package:study_tracker/core/constants/app_strings.dart';
 import 'package:study_tracker/features/auth/providers/auth_provider.dart';
 import 'package:study_tracker/features/tasks/models/task_model.dart';
+import 'package:study_tracker/features/tasks/provider/category_filter_provider.dart';
 import 'package:study_tracker/features/tasks/provider/task_provider.dart';
 import 'package:study_tracker/features/tasks/widgets/task_card.dart';
 import 'package:study_tracker/routes/app_routes.dart';
@@ -38,11 +39,29 @@ class _TaskListScreenState extends State<TaskListScreen> {
           ),
         ],
       ),
-      body: Consumer<TaskProvider>(
-        builder: (context, taskProvider, child) {
-          if (taskProvider.tasks.isEmpty) return _buildEmptyState();
-          return _buildTaskList(taskProvider.tasks);
-        },
+      body: Column(
+        children: [
+          _buildCategoryFilterBar(),
+          Expanded(
+            child: Consumer2<TaskProvider, CategoryFilterProvider>(
+              builder: (context, taskProvider, filterProvider, _) {
+                final allTasks = taskProvider.tasks;
+                final filtered = filterProvider.hasActiveFilter
+                    ? allTasks
+                          .where(
+                            (t) => filterProvider.selectedCategories.contains(
+                              t.category.label,
+                            ),
+                          )
+                          .toList()
+                    : allTasks;
+
+                if (filtered.isEmpty) return _buildEmptyState();
+                return _buildTaskList(filtered);
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAddTask,
@@ -91,6 +110,37 @@ class _TaskListScreenState extends State<TaskListScreen> {
           child: _buildDismissibleTaskCard(task, index), // From P05
         );
       },
+    );
+  }
+
+  Widget _buildCategoryFilterBar() {
+    return SizedBox(
+      height: 56,
+      child: Consumer<CategoryFilterProvider>(
+        builder: (context, filterProvider, _) {
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            itemCount: filterProvider.availableCategories.length,
+            itemBuilder: (context, index) {
+              final category = filterProvider.availableCategories[index];
+              final isSelected = filterProvider.selectedCategories.contains(
+                category,
+              );
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FilterChip(
+                  label: Text(category),
+                  selected: isSelected,
+                  onSelected: (_) => filterProvider.toggleCategory(category),
+                  selectedColor: Theme.of(context).colorScheme.primaryContainer,
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
