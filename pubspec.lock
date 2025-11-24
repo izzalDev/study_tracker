@@ -101,10 +101,10 @@ packages:
     dependency: "direct dev"
     description:
       name: code_coverage
-      sha256: "3138c4fb8774d0eb5221bd4de2165e1a86ccb5e03240da1ad35a6082db8b0aa3"
+      sha256: d70b46a57893f903b93b934682046d5ff031107a228f83a6ba23758a517be79f
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.1"
+    version: "2.1.1"
   collection:
     dependency: transitive
     description:
